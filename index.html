@@ -3,198 +3,405 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TradePilot - Trading Tools</title>
+<title>TradePilot - Risk Calculator</title>
 
 <style>
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
+
 body {
-    margin: 0;
     font-family: Arial, sans-serif;
-    background: #0b1220;
-    color: white;
-}
-header {
-    padding: 22px;
-    background: #121c2e;
-    text-align: center;
-    border-bottom: 1px solid #293951;
-}
-header h1 {
-    color: #45d6a4;
-    margin: 0;
-}
-header p {
-    color: #a8b5ca;
-}
-main {
-    max-width: 850px;
-    margin: auto;
-    padding: 18px;
-}
-.hero {
-    padding: 25px 5px;
-}
-.hero h2 {
-    font-size: 30px;
-}
-.hero p {
-    color: #a8b5ca;
-    line-height: 1.6;
-}
-.card {
-    background: #121c2e;
-    border: 1px solid #293951;
-    border-radius: 14px;
+    background: #0b1120;
+    color: #f1f5f9;
     padding: 20px;
-    margin: 18px 0;
 }
+
+.container {
+    max-width: 700px;
+    margin: 20px auto;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.header h1 {
+    color: #38bdf8;
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+.header p {
+    color: #94a3b8;
+    font-size: 14px;
+}
+
+.card {
+    background: #111c30;
+    border: 1px solid #263449;
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 18px;
+}
+
+.card h2 {
+    font-size: 19px;
+    margin-bottom: 20px;
+    color: #e2e8f0;
+}
+
+.form-group {
+    margin-bottom: 17px;
+}
+
 label {
     display: block;
-    margin: 12px 0 6px;
+    margin-bottom: 8px;
+    font-size: 14px;
     color: #cbd5e1;
 }
-input {
+
+input, select {
     width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #34445e;
-    background: #0b1220;
+    padding: 13px;
+    border: 1px solid #334155;
+    border-radius: 9px;
+    background: #0b1120;
+    color: #f8fafc;
+    font-size: 16px;
+    outline: none;
+}
+
+input:focus, select:focus {
+    border-color: #38bdf8;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    background: #0284c7;
+    border: none;
+    border-radius: 9px;
     color: white;
     font-size: 16px;
-}
-button {
-    margin-top: 15px;
-    padding: 12px 18px;
-    background: #45d6a4;
-    color: #07150f;
-    border: none;
-    border-radius: 8px;
     font-weight: bold;
-    font-size: 15px;
+    cursor: pointer;
+    margin-top: 5px;
 }
-.result {
-    margin-top: 16px;
-    padding: 15px;
-    background: #0b1725;
-    border-radius: 9px;
-    color: #45d6a4;
+
+button:hover {
+    background: #0369a1;
+}
+
+.results {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.result-box {
+    background: #0b1120;
+    border: 1px solid #263449;
+    border-radius: 11px;
+    padding: 16px;
+}
+
+.result-box span {
+    display: block;
+    color: #94a3b8;
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+
+.result-box strong {
     font-size: 20px;
+    color: #38bdf8;
     overflow-wrap: anywhere;
 }
+
+.result-box.highlight strong {
+    color: #4ade80;
+}
+
 .note {
-    color: #a8b5ca;
-    font-size: 13px;
+    color: #94a3b8;
+    font-size: 12px;
+    line-height: 1.7;
+    margin-top: 15px;
+}
+
+.error {
+    color: #f87171;
+    font-size: 14px;
+    margin-top: 12px;
     line-height: 1.6;
 }
-footer {
+
+.footer {
     text-align: center;
-    color: #a8b5ca;
-    padding: 25px;
+    color: #64748b;
+    font-size: 12px;
+    margin-top: 25px;
+    line-height: 1.8;
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 12px;
+    }
+
+    .header h1 {
+        font-size: 27px;
+    }
+
+    .card {
+        padding: 16px;
+    }
+
+    .results {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .result-box {
+        padding: 12px;
+    }
+
+    .result-box strong {
+        font-size: 17px;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<header>
-    <h1>TradePilot</h1>
-    <p>Free Trading Tools for Traders</p>
-</header>
+<div class="container">
 
-<main>
+    <div class="header">
+        <h1>TradePilot</h1>
+        <p>Smart Trading Risk Calculator</p>
+    </div>
 
-<section class="hero">
-    <h2>Trade Smarter. Manage Risk.</h2>
-    <p>
-        Calculate your trading risk and risk-to-reward ratio.
-        Build better trading habits with simple free tools.
-    </p>
-</section>
+    <div class="card">
+        <h2>Calculate Your Trading Risk</h2>
 
-<section class="card">
-    <h2>Risk Calculator</h2>
-    <label for="balance">Account Balance ($)</label>
-    <input id="balance" type="number" value="5000" min="0">
+        <div class="form-group">
+            <label for="instrument">Select Instrument</label>
+            <select id="instrument">
+                <option value="XAUUSD">XAUUSD — Gold</option>
+                <option value="EURUSD">EURUSD</option>
+                <option value="EURJPY">EURJPY</option>
+                <option value="USDJPY">USDJPY</option>
+                <option value="BTCUSD">BTCUSD — Bitcoin</option>
+                <option value="ETHUSD">ETHUSD — Ethereum</option>
+            </select>
+        </div>
 
-    <label for="risk">Risk Percentage (%)</label>
-    <input id="risk" type="number" value="1" min="0" max="100" step="any">
+        <div class="form-group">
+            <label for="balance">Account Balance (USD)</label>
+            <input id="balance" type="number" min="0"
+                   step="any" placeholder="e.g. 5000">
+        </div>
 
-    <button onclick="calculateRisk()">Calculate Risk</button>
-    <div class="result" id="riskResult">Your risk: $50.00</div>
-</section>
+        <div class="form-group">
+            <label for="risk">Risk Percentage (%)</label>
+            <input id="risk" type="number" min="0"
+                   max="100" step="any" value="1">
+        </div>
 
-<section class="card">
-    <h2>Risk-to-Reward Calculator</h2>
+        <div class="form-group">
+            <label for="entry">Entry Price</label>
+            <input id="entry" type="number" min="0"
+                   step="any" placeholder="Enter entry price">
+        </div>
 
-    <label for="entry">Entry Price</label>
-    <input id="entry" type="number" value="1.1000" step="any">
+        <div class="form-group">
+            <label for="stop">Stop Loss Price</label>
+            <input id="stop" type="number" min="0"
+                   step="any" placeholder="Enter stop loss price">
+        </div>
 
-    <label for="stop">Stop Loss Price</label>
-    <input id="stop" type="number" value="1.0950" step="any">
+        <button onclick="calculateRisk()">Calculate Risk</button>
+        <div id="error" class="error" role="alert"></div>
+    </div>
 
-    <label for="target">Take Profit Price</label>
-    <input id="target" type="number" value="1.1100" step="any">
+    <div class="card">
+        <h2>Calculation Results</h2>
 
-    <button onclick="calculateRR()">Calculate R:R</button>
-    <div class="result" id="rrResult">Risk : Reward = 1 : 2.00</div>
-</section>
+        <div class="results">
+            <div class="result-box">
+                <span>Risk Amount</span>
+                <strong id="riskAmount">$0.00</strong>
+            </div>
 
-<section class="card">
-    <h2>Trading Tips</h2>
-    <p>✓ Decide your risk before entering a trade.</p>
-    <p>✓ Backtest your strategy consistently.</p>
-    <p>✓ Follow your trading plan.</p>
-    <p>✓ Avoid revenge trading.</p>
-    <p class="note">
-        Educational purposes only. Trading involves risk.
-        These tools do not guarantee profits and are not financial advice.
-    </p>
-</section>
+            <div class="result-box">
+                <span>Stop Loss Distance</span>
+                <strong id="distance">0.00000</strong>
+            </div>
 
-</main>
+            <div class="result-box highlight">
+                <span>Suggested Lot Size</span>
+                <strong id="lotSize">0.00</strong>
+            </div>
 
-<footer>
-    TradePilot © 2026 | Free Trading Tools
-</footer>
+            <div class="result-box">
+                <span>Estimated Loss</span>
+                <strong id="estimatedLoss">$0.00</strong>
+            </div>
+        </div>
+
+        <p class="note">
+            Important: Lot sizing uses simplified instrument assumptions.
+            Actual contract specifications, tick values, lot sizes and
+            currency conversions vary by broker. Verify the result with
+            your broker before placing a trade.
+        </p>
+    </div>
+
+    <div class="footer">
+        TradePilot © 2026<br>
+        Plan your risk. Protect your capital.
+    </div>
+
+</div>
 
 <script>
-function calculateRisk() {
-    const balance = Number(document.getElementById("balance").value);
-    const risk = Number(document.getElementById("risk").value);
+/*
+  Simplified assumptions for this calculator:
+  XAUUSD: 100 troy ounces per lot
+  EURUSD: 100,000 EUR per lot
+  EURJPY: 100,000 EUR per lot
+  USDJPY: 100,000 USD per lot
+  BTCUSD / ETHUSD: 1 coin per lot
 
-    if (!Number.isFinite(balance) || !Number.isFinite(risk) ||
-        balance < 0 || risk < 0 || risk > 100) {
-        document.getElementById("riskResult").textContent =
-            "Please enter valid values.";
-        return;
-    }
+  These assumptions are examples, not universal broker specifications.
+*/
 
-    const amount = balance * risk / 100;
+const instruments = {
+    XAUUSD: { type: "gold", contract: 100 },
+    EURUSD: { type: "forex", contract: 100000 },
+    EURJPY: { type: "jpy", contract: 100000 },
+    USDJPY: { type: "jpy", contract: 100000 },
+    BTCUSD: { type: "crypto", contract: 1 },
+    ETHUSD: { type: "crypto", contract: 1 }
+};
 
-    document.getElementById("riskResult").textContent =
-        "Your risk: $" + amount.toFixed(2);
+function formatMoney(value) {
+    return "$" + value.toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
 }
 
-function calculateRR() {
+function formatNumber(value, decimals = 5) {
+    return value.toLocaleString("en-US", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: decimals
+    });
+}
+
+function calculateRisk() {
+    const instrument = document.getElementById("instrument").value;
+    const balance = Number(document.getElementById("balance").value);
+    const riskPercent = Number(document.getElementById("risk").value);
     const entry = Number(document.getElementById("entry").value);
     const stop = Number(document.getElementById("stop").value);
-    const target = Number(document.getElementById("target").value);
 
-    if (![entry, stop, target].every(Number.isFinite) ||
-        entry === stop || entry === target) {
-        document.getElementById("rrResult").textContent =
-            "Please enter valid prices.";
+    const error = document.getElementById("error");
+    error.textContent = "";
+
+    if (
+        document.getElementById("balance").value === "" ||
+        document.getElementById("risk").value === "" ||
+        document.getElementById("entry").value === "" ||
+        document.getElementById("stop").value === ""
+    ) {
+        error.textContent = "Please fill in all fields.";
         return;
     }
 
-    const risk = Math.abs(entry - stop);
-    const reward = Math.abs(target - entry);
-    const ratio = reward / risk;
+    if (
+        !Number.isFinite(balance) ||
+        !Number.isFinite(riskPercent) ||
+        !Number.isFinite(entry) ||
+        !Number.isFinite(stop) ||
+        balance <= 0 ||
+        riskPercent <= 0 ||
+        riskPercent > 100 ||
+        entry <= 0 ||
+        stop <= 0
+    ) {
+        error.textContent =
+            "Enter valid positive numbers. Risk must be above 0% and no more than 100%.";
+        return;
+    }
 
-    document.getElementById("rrResult").textContent =
-        "Risk : Reward = 1 : " + ratio.toFixed(2);
+    if (entry === stop) {
+        error.textContent =
+            "Entry price and Stop Loss price cannot be the same.";
+        return;
+    }
+
+    const distance = Math.abs(entry - stop);
+    const riskAmount = balance * riskPercent / 100;
+    const spec = instruments[instrument];
+
+    let lossPerLot;
+
+    if (instrument === "EURUSD") {
+        // Simplified USD-quoted forex pair assumption.
+        lossPerLot = distance * spec.contract;
+    } else if (instrument === "XAUUSD") {
+        // Simplified gold CFD assumption.
+        lossPerLot = distance * spec.contract;
+    } else if (instrument === "BTCUSD" || instrument === "ETHUSD") {
+        // Simplified assumption: 1 coin per lot.
+        lossPerLot = distance * spec.contract;
+    } else if (instrument === "USDJPY") {
+        /*
+          USDJPY loss is first calculated in JPY, then approximated
+          in USD using the entry price as the conversion factor.
+        */
+        lossPerLot = distance * spec.contract / entry;
+    } else if (instrument === "EURJPY") {
+        /*
+          Simplified EURJPY calculation. Approximate JPY-to-USD
+          conversion assumes 150 JPY per USD.
+        */
+        const jpyPerUsd = 150;
+        lossPerLot = distance * spec.contract / jpyPerUsd;
+    }
+
+    if (!Number.isFinite(lossPerLot) || lossPerLot <= 0) {
+        error.textContent = "Unable to calculate. Please check your prices.";
+        return;
+    }
+
+    const rawLot = riskAmount / lossPerLot;
+
+    /*
+      Round DOWN to 0.01 lot steps so the suggested risk
+      does not exceed the target under the stated assumptions.
+    */
+    const lot = Math.floor((rawLot + 1e-10) * 100) / 100;
+    const estimatedLoss = lot * lossPerLot;
+
+    document.getElementById("riskAmount").textContent =
+        formatMoney(riskAmount);
+
+    document.getElementById("distance").textContent =
+        formatNumber(distance, 5);
+
+    document.getElementById("lotSize").textContent =
+        lot.toFixed(2);
+
+    document.getElementById("estimatedLoss").textContent =
+        formatMoney(estimatedLoss);
 }
 </script>
 
