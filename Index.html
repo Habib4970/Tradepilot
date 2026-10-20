@@ -1,1 +1,202 @@
-boss
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TradePilot - Trading Tools</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0b1220;
+    color: white;
+}
+header {
+    padding: 22px;
+    background: #121c2e;
+    text-align: center;
+    border-bottom: 1px solid #293951;
+}
+header h1 {
+    color: #45d6a4;
+    margin: 0;
+}
+header p {
+    color: #a8b5ca;
+}
+main {
+    max-width: 850px;
+    margin: auto;
+    padding: 18px;
+}
+.hero {
+    padding: 25px 5px;
+}
+.hero h2 {
+    font-size: 30px;
+}
+.hero p {
+    color: #a8b5ca;
+    line-height: 1.6;
+}
+.card {
+    background: #121c2e;
+    border: 1px solid #293951;
+    border-radius: 14px;
+    padding: 20px;
+    margin: 18px 0;
+}
+label {
+    display: block;
+    margin: 12px 0 6px;
+    color: #cbd5e1;
+}
+input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #34445e;
+    background: #0b1220;
+    color: white;
+    font-size: 16px;
+}
+button {
+    margin-top: 15px;
+    padding: 12px 18px;
+    background: #45d6a4;
+    color: #07150f;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 15px;
+}
+.result {
+    margin-top: 16px;
+    padding: 15px;
+    background: #0b1725;
+    border-radius: 9px;
+    color: #45d6a4;
+    font-size: 20px;
+    overflow-wrap: anywhere;
+}
+.note {
+    color: #a8b5ca;
+    font-size: 13px;
+    line-height: 1.6;
+}
+footer {
+    text-align: center;
+    color: #a8b5ca;
+    padding: 25px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>TradePilot</h1>
+    <p>Free Trading Tools for Traders</p>
+</header>
+
+<main>
+
+<section class="hero">
+    <h2>Trade Smarter. Manage Risk.</h2>
+    <p>
+        Calculate your trading risk and risk-to-reward ratio.
+        Build better trading habits with simple free tools.
+    </p>
+</section>
+
+<section class="card">
+    <h2>Risk Calculator</h2>
+    <label for="balance">Account Balance ($)</label>
+    <input id="balance" type="number" value="5000" min="0">
+
+    <label for="risk">Risk Percentage (%)</label>
+    <input id="risk" type="number" value="1" min="0" max="100" step="any">
+
+    <button onclick="calculateRisk()">Calculate Risk</button>
+    <div class="result" id="riskResult">Your risk: $50.00</div>
+</section>
+
+<section class="card">
+    <h2>Risk-to-Reward Calculator</h2>
+
+    <label for="entry">Entry Price</label>
+    <input id="entry" type="number" value="1.1000" step="any">
+
+    <label for="stop">Stop Loss Price</label>
+    <input id="stop" type="number" value="1.0950" step="any">
+
+    <label for="target">Take Profit Price</label>
+    <input id="target" type="number" value="1.1100" step="any">
+
+    <button onclick="calculateRR()">Calculate R:R</button>
+    <div class="result" id="rrResult">Risk : Reward = 1 : 2.00</div>
+</section>
+
+<section class="card">
+    <h2>Trading Tips</h2>
+    <p>✓ Decide your risk before entering a trade.</p>
+    <p>✓ Backtest your strategy consistently.</p>
+    <p>✓ Follow your trading plan.</p>
+    <p>✓ Avoid revenge trading.</p>
+    <p class="note">
+        Educational purposes only. Trading involves risk.
+        These tools do not guarantee profits and are not financial advice.
+    </p>
+</section>
+
+</main>
+
+<footer>
+    TradePilot © 2026 | Free Trading Tools
+</footer>
+
+<script>
+function calculateRisk() {
+    const balance = Number(document.getElementById("balance").value);
+    const risk = Number(document.getElementById("risk").value);
+
+    if (!Number.isFinite(balance) || !Number.isFinite(risk) ||
+        balance < 0 || risk < 0 || risk > 100) {
+        document.getElementById("riskResult").textContent =
+            "Please enter valid values.";
+        return;
+    }
+
+    const amount = balance * risk / 100;
+
+    document.getElementById("riskResult").textContent =
+        "Your risk: $" + amount.toFixed(2);
+}
+
+function calculateRR() {
+    const entry = Number(document.getElementById("entry").value);
+    const stop = Number(document.getElementById("stop").value);
+    const target = Number(document.getElementById("target").value);
+
+    if (![entry, stop, target].every(Number.isFinite) ||
+        entry === stop || entry === target) {
+        document.getElementById("rrResult").textContent =
+            "Please enter valid prices.";
+        return;
+    }
+
+    const risk = Math.abs(entry - stop);
+    const reward = Math.abs(target - entry);
+    const ratio = reward / risk;
+
+    document.getElementById("rrResult").textContent =
+        "Risk : Reward = 1 : " + ratio.toFixed(2);
+}
+</script>
+
+</body>
+</html>
