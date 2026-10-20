@@ -2,622 +2,83 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trading Risk Calculator</title>
 
 <style>
-:root{
-  --bg:#0b1020;
-  --card:#121a2d;
-  --card2:#0e1729;
-  --border:#293957;
-  --text:#eef4ff;
-  --muted:#91a0ba;
-  --purple:#8b5cf6;
-  --cyan:#22d3ee;
-  --green:#20c997;
-  --red:#ff5c70;
-  --yellow:#f6c453;
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
-
-*{box-sizing:border-box}
 
 body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:linear-gradient(135deg,#080d1a,#10172a,#0b1222);
-  color:var(--text);
+    font-family:Arial, sans-serif;
+    background:#080b18;
+    color:#fff;
+    padding:20px;
 }
 
-header{
-  background:#0d1425;
-  border-bottom:1px solid var(--border);
-  padding:22px 6%;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+.container{
+    max-width:1100px;
+    margin:auto;
 }
 
-header h1{
-  margin:0;
-  font-size:25px;
+h1{
+    text-align:center;
+    margin-bottom:8px;
+    color:#7c8cff;
 }
 
-header p{
-  margin:6px 0 0;
-  color:var(--muted);
-}
-
-.badge{
-  background:#151f35;
-  border:1px solid #354363;
-  padding:9px 15px;
-  border-radius:20px;
-}
-
-main{
-  max-width:1200px;
-  margin:28px auto;
-  padding:0 18px;
+.subtitle{
+    text-align:center;
+    color:#8f96ad;
+    margin-bottom:25px;
 }
 
 .card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:22px;
-  margin-bottom:20px;
-  box-shadow:0 10px 30px #0005;
+    background:#101528;
+    border:1px solid #202844;
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:20px;
 }
 
-h2{
-  margin:0 0 18px;
-  font-size:18px;
+.card h2{
+    margin-bottom:18px;
+    color:#64e6ff;
+    font-size:20px;
 }
 
-.instruments{
-  display:flex;
-  flex-wrap:wrap;
-  gap:9px;
-}
-
-button{
-  cursor:pointer;
-  font-weight:bold;
-}
-
-.instrument,
-.entry-tab,
-.status{
-  background:#111a2d;
-  color:#bdc9dc;
-  border:1px solid #30405f;
-  border-radius:22px;
-  padding:9px 15px;
-}
-
-.instrument.active,
-.entry-tab.active{
-  background:linear-gradient(135deg,var(--purple),#6547e8);
-  color:white;
-  border-color:transparent;
-}
-
-.fields{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:14px;
+.settings-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
 }
 
 label{
-  font-size:12px;
-  font-weight:bold;
-  color:var(--muted);
+    display:block;
+    color:#9da5bd;
+    font-size:13px;
+    margin-bottom:7px;
 }
 
-input{
-  width:100%;
-  margin-top:7px;
-  padding:12px;
-  border-radius:9px;
-  border:1px solid #30405f;
-  background:#0d1527;
-  color:white;
-  font-size:15px;
-  outline:none;
+input, select{
+    width:100%;
+    padding:12px;
+    border-radius:8px;
+    border:1px solid #2b3557;
+    background:#080c1b;
+    color:white;
+    outline:none;
 }
 
-input:focus{
-  border-color:var(--cyan);
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:1.4fr 1fr;
-  gap:20px;
-}
-
-.entry-tabs{
-  display:flex;
-  gap:9px;
-  margin-bottom:16px;
-}
-
-.entry{
-  display:none;
-}
-
-.entry.active{
-  display:block;
-}
-
-.actions{
-  display:flex;
-  gap:10px;
-  margin-top:16px;
+input:focus, select:focus{
+    border-color:#6677ff;
 }
 
 .btn{
-  border:0;
-  border-radius:9px;
-  padding:12px 20px;
-  background:linear-gradient(135deg,var(--purple),#6547e8);
-  color:white;
-}
-
-.btn.secondary{
-  background:#202c44;
-}
-
-.status-row{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-top:15px;
-}
-
-.status.win{
-  color:#42e2b2;
-  background:#12362f;
-}
-
-.status.loss{
-  color:#ff8493;
-  background:#391c25;
-}
-
-.status.be{
-  color:#f6cf74;
-  background:#3b3016;
-}
-
-.summary{
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
-}
-
-.metric{
-  flex:1;
-  min-width:145px;
-  padding:15px;
-  background:var(--card2);
-  border:1px solid var(--border);
-  border-radius:11px;
-}
-
-.metric span{
-  display:block;
-  color:var(--muted);
-  font-size:12px;
-}
-
-.metric strong{
-  display:block;
-  font-size:21px;
-  margin-top:5px;
-}
-
-.results{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-  margin-top:12px;
-}
-
-.result{
-  padding:15px;
-  background:var(--card2);
-  border:1px solid var(--border);
-  border-radius:11px;
-}
-
-.result span{
-  color:var(--muted);
-  font-size:12px;
-}
-
-.result b{
-  display:block;
-  margin-top:6px;
-  font-size:20px;
-}
-
-.green{color:var(--green)}
-.red{color:var(--red)}
-.blue{color:var(--cyan)}
-
-.warning{
-  margin-top:15px;
-  padding:13px;
-  border-radius:9px;
-  background:#332b12;
-  border:1px solid #66552e;
-  color:#f5d47b;
-}
-
-footer{
-  text-align:center;
-  color:#667795;
-  padding:10px 20px 30px;
-}
-
-@media(max-width:850px){
-  .grid{grid-template-columns:1fr}
-  .fields{grid-template-columns:1fr 1fr}
-}
-
-@media(max-width:500px){
-  .fields{grid-template-columns:1fr}
-  .results{grid-template-columns:1fr}
-  .badge{display:none}
-}
-</style>
-</head>
-
-<body>
-
-<header>
-  <div>
-    <h1>📈 Trading Risk Calculator</h1>
-    <p>Risk Management • Position Sizing • Daily Trade Tracker</p>
-  </div>
-
-  <div class="badge">20+ Instruments</div>
-</header>
-
-<main>
-
-<!-- INSTRUMENTS -->
-<section class="card">
-
-<h2>Trading Instrument</h2>
-
-<div class="instruments">
-
-<button class="instrument active" onclick="selectInstrument(this)">XAUUSD</button>
-<button class="instrument" onclick="selectInstrument(this)">EURUSD</button>
-<button class="instrument" onclick="selectInstrument(this)">GBPUSD</button>
-<button class="instrument" onclick="selectInstrument(this)">USDJPY</button>
-<button class="instrument" onclick="selectInstrument(this)">USDCHF</button>
-<button class="instrument" onclick="selectInstrument(this)">USDCAD</button>
-<button class="instrument" onclick="selectInstrument(this)">AUDUSD</button>
-<button class="instrument" onclick="selectInstrument(this)">NZDUSD</button>
-<button class="instrument" onclick="selectInstrument(this)">EURJPY</button>
-<button class="instrument" onclick="selectInstrument(this)">GBPJPY</button>
-<button class="instrument" onclick="selectInstrument(this)">EURGBP</button>
-<button class="instrument" onclick="selectInstrument(this)">AUDJPY</button>
-<button class="instrument" onclick="selectInstrument(this)">CADJPY</button>
-<button class="instrument" onclick="selectInstrument(this)">CHFJPY</button>
-<button class="instrument" onclick="selectInstrument(this)">BTCUSD</button>
-<button class="instrument" onclick="selectInstrument(this)">ETHUSD</button>
-<button class="instrument" onclick="selectInstrument(this)">NAS100</button>
-<button class="instrument" onclick="selectInstrument(this)">US30</button>
-<button class="instrument" onclick="selectInstrument(this)">SPX500</button>
-<button class="instrument" onclick="selectInstrument(this)">GER40</button>
-
-</div>
-</section>
-
-
-<!-- ACCOUNT -->
-<section class="card">
-
-<h2>Account Settings</h2>
-
-<div class="fields">
-
-<div>
-<label>Account Balance ($)</label>
-<input id="balance" type="number" value="10000" oninput="calculate()">
-</div>
-
-<div>
-<label>Risk per Day (%)</label>
-<input id="dailyRisk" type="number" value="2" step=".1" oninput="calculate()">
-</div>
-
-<div>
-<label>Risk per Trade (%)</label>
-<input id="tradeRisk" type="number" value="1" step=".1" oninput="calculate()">
-</div>
-
-<div>
-<label>Max Trades / Day</label>
-<input id="maxTrades" type="number" value="4" min="1" oninput="calculate()">
-</div>
-
-</div>
-</section>
-
-
-<div class="grid">
-
-<!-- ENTRIES -->
-<section class="card">
-
-<h2>Today's Entries</h2>
-
-<div class="entry-tabs">
-
-<button class="entry-tab active" onclick="showEntry(1)">
-Entry 1
-</button>
-
-<button class="entry-tab" onclick="showEntry(2)">
-Entry 2
-</button>
-
-<button class="entry-tab" onclick="showEntry(3)">
-Entry 3
-</button>
-
-<button class="entry-tab" onclick="showEntry(4)">
-Entry 4
-</button>
-
-</div>
-
-<div id="entry1" class="entry active"></div>
-<div id="entry2" class="entry"></div>
-<div id="entry3" class="entry"></div>
-<div id="entry4" class="entry"></div>
-
-</section>
-
-
-<!-- SUMMARY -->
-<section class="card">
-
-<h2>Daily Summary</h2>
-
-<div class="summary">
-
-<div class="metric">
-<span>Daily Risk Limit</span>
-<strong id="dailyLimit">$200.00</strong>
-</div>
-
-<div class="metric">
-<span>Used Risk</span>
-<strong id="usedRisk">$0.00</strong>
-</div>
-
-<div class="metric">
-<span>Remaining Risk</span>
-<strong class="green" id="remainingRisk">$200.00</strong>
-</div>
-
-</div>
-
-
-<div class="results">
-
-<div class="result">
-<span>Trades Taken</span>
-<b id="tradesTaken">0 / 4</b>
-</div>
-
-<div class="result">
-<span>Risk per Trade</span>
-<b class="blue" id="riskPerTrade">$100.00</b>
-</div>
-
-</div>
-
-<div id="message" class="warning">
-You can take 4 planned entries today.
-</div>
-
-</section>
-
-</div>
-
-</main>
-
-<footer>
-Trading is risky. Use proper risk management.
-</footer>
-
-
-<script>
-
-const trades = [
- {risk:0,status:""},
- {risk:0,status:""},
- {risk:0,status:""},
- {risk:0,status:""}
-];
-
-
-function entryHTML(i){
-
-return `
-
-<div class="fields">
-
-<div>
-<label>Entry Price</label>
-<input
-id="e${i}"
-type="number"
-${i===1?'value="2650"':''}
-placeholder="2650"
-oninput="calcEntry(${i})">
-</div>
-
-<div>
-<label>Stop Loss</label>
-<input
-id="sl${i}"
-type="number"
-${i===1?'value="2640"':''}
-placeholder="2640"
-oninput="calcEntry(${i})">
-</div>
-
-<div>
-<label>Take Profit</label>
-<input
-id="tp${i}"
-type="number"
-${i===1?'value="2670"':''}
-placeholder="2670"
-oninput="calcEntry(${i})">
-</div>
-
-<div>
-<label>Position Size (Lot)</label>
-<input
-id="lot${i}"
-type="number"
-${i===1?'value="0.10"':''}
-step=".01"
-placeholder="0.10"
-oninput="calcEntry(${i})">
-</div>
-
-</div>
-
-
-<div class="actions">
-
-<button
-class="btn"
-onclick="takeEntry(${i})">
-Take Entry ${i}
-</button>
-
-<button
-class="btn secondary"
-onclick="resetEntry(${i})">
-Reset
-</button>
-
-</div>
-
-
-<div class="status-row">
-
-<button
-class="status win"
-onclick="setStatus(${i},'win')">
-✓ Win
-</button>
-
-<button
-class="status loss"
-onclick="setStatus(${i},'loss')">
-✕ Loss
-</button>
-
-<button
-class="status be"
-onclick="setStatus(${i},'be')">
-= Breakeven
-</button>
-
-<span id="st${i}" style="padding:10px;color:#91a0ba">
-Not taken
-</span>
-
-</div>
-
-
-<p style="color:#91a0ba">
-
-Risk Amount:
-<b id="risk${i}" style="color:white">$0.00</b>
-
-&nbsp; | &nbsp;
-
-R:R:
-<b id="rr${i}" style="color:white">—</b>
-
-</p>
-
-`;
-
-}
-
-
-for(let i=1;i<=4;i++){
-
-document.getElementById("entry"+i)
-.innerHTML=entryHTML(i);
-
-}
-
-
-function showEntry(n){
-
-document
-.querySelectorAll(".entry")
-.forEach(x=>x.classList.remove("active"));
-
-document
-.querySelectorAll(".entry-tab")
-.forEach(x=>x.classList.remove("active"));
-
-document
-.getElementById("entry"+n)
-.classList.add("active");
-
-document
-.querySelectorAll(".entry-tab")[n-1]
-.classList.add("active");
-
-}
-
-
-function selectInstrument(btn){
-
-document
-.querySelectorAll(".instrument")
-.forEach(x=>x.classList.remove("active"));
-
-btn.classList.add("active");
-
-}
-
-
-function calcEntry(i){
-
-const entry =
-+document.getElementById("e"+i).value;
-
-const sl =
-+document.getElementById("sl"+i).value;
-
-const tp =
-+document.getElementById("tp"+i).value;
-
-const lot =
-+document.getElementById("lot"+i).value || 0;
-
-
-/*
-Demo calculation.
+    margin-top:15px;
 
 Final version:
 প্রতিটি instrument-এর আলাদা
