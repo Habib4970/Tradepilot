@@ -2,407 +2,825 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TradePilot - Risk Calculator</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Trading Risk Calculator</title>
 
 <style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+:root{
+  --bg:#0b1020;
+  --card:#121a2d;
+  --card2:#0e1729;
+  --border:#293957;
+  --text:#eef4ff;
+  --muted:#91a0ba;
+  --purple:#8b5cf6;
+  --cyan:#22d3ee;
+  --green:#20c997;
+  --red:#ff5c70;
+  --yellow:#f6c453;
 }
 
-body {
-    font-family: Arial, sans-serif;
-    background: #0b1120;
-    color: #f1f5f9;
-    padding: 20px;
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:linear-gradient(135deg,#080d1a,#10172a,#0b1222);
+  color:var(--text);
 }
 
-.container {
-    max-width: 700px;
-    margin: 20px auto;
+header{
+  background:#0d1425;
+  border-bottom:1px solid var(--border);
+  padding:22px 6%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
-.header {
-    text-align: center;
-    margin-bottom: 25px;
+header h1{
+  margin:0;
+  font-size:25px;
 }
 
-.header h1 {
-    color: #38bdf8;
-    font-size: 32px;
-    margin-bottom: 8px;
+header p{
+  margin:6px 0 0;
+  color:var(--muted);
 }
 
-.header p {
-    color: #94a3b8;
-    font-size: 14px;
+.badge{
+  background:#151f35;
+  border:1px solid #354363;
+  padding:9px 15px;
+  border-radius:20px;
 }
 
-.card {
-    background: #111c30;
-    border: 1px solid #263449;
-    border-radius: 16px;
-    padding: 22px;
-    margin-bottom: 18px;
+main{
+  max-width:1200px;
+  margin:28px auto;
+  padding:0 18px;
 }
 
-.card h2 {
-    font-size: 19px;
-    margin-bottom: 20px;
-    color: #e2e8f0;
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:22px;
+  margin-bottom:20px;
+  box-shadow:0 10px 30px #0005;
 }
 
-.form-group {
-    margin-bottom: 17px;
+h2{
+  margin:0 0 18px;
+  font-size:18px;
 }
 
-label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 14px;
-    color: #cbd5e1;
+.instruments{
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px;
 }
 
-input, select {
-    width: 100%;
-    padding: 13px;
-    border: 1px solid #334155;
-    border-radius: 9px;
-    background: #0b1120;
-    color: #f8fafc;
-    font-size: 16px;
-    outline: none;
+button{
+  cursor:pointer;
+  font-weight:bold;
 }
 
-input:focus, select:focus {
-    border-color: #38bdf8;
+.instrument,
+.entry-tab,
+.status{
+  background:#111a2d;
+  color:#bdc9dc;
+  border:1px solid #30405f;
+  border-radius:22px;
+  padding:9px 15px;
 }
 
-button {
-    width: 100%;
-    padding: 14px;
-    background: #0284c7;
-    border: none;
-    border-radius: 9px;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 5px;
+.instrument.active,
+.entry-tab.active{
+  background:linear-gradient(135deg,var(--purple),#6547e8);
+  color:white;
+  border-color:transparent;
 }
 
-button:hover {
-    background: #0369a1;
+.fields{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
 }
 
-.results {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
+label{
+  font-size:12px;
+  font-weight:bold;
+  color:var(--muted);
 }
 
-.result-box {
-    background: #0b1120;
-    border: 1px solid #263449;
-    border-radius: 11px;
-    padding: 16px;
+input{
+  width:100%;
+  margin-top:7px;
+  padding:12px;
+  border-radius:9px;
+  border:1px solid #30405f;
+  background:#0d1527;
+  color:white;
+  font-size:15px;
+  outline:none;
 }
 
-.result-box span {
-    display: block;
-    color: #94a3b8;
-    font-size: 12px;
-    margin-bottom: 10px;
+input:focus{
+  border-color:var(--cyan);
 }
 
-.result-box strong {
-    font-size: 20px;
-    color: #38bdf8;
-    overflow-wrap: anywhere;
+.grid{
+  display:grid;
+  grid-template-columns:1.4fr 1fr;
+  gap:20px;
 }
 
-.result-box.highlight strong {
-    color: #4ade80;
+.entry-tabs{
+  display:flex;
+  gap:9px;
+  margin-bottom:16px;
 }
 
-.note {
-    color: #94a3b8;
-    font-size: 12px;
-    line-height: 1.7;
-    margin-top: 15px;
+.entry{
+  display:none;
 }
 
-.error {
-    color: #f87171;
-    font-size: 14px;
-    margin-top: 12px;
-    line-height: 1.6;
+.entry.active{
+  display:block;
 }
 
-.footer {
-    text-align: center;
-    color: #64748b;
-    font-size: 12px;
-    margin-top: 25px;
-    line-height: 1.8;
+.actions{
+  display:flex;
+  gap:10px;
+  margin-top:16px;
 }
 
-@media (max-width: 480px) {
-    body {
-        padding: 12px;
-    }
+.btn{
+  border:0;
+  border-radius:9px;
+  padding:12px 20px;
+  background:linear-gradient(135deg,var(--purple),#6547e8);
+  color:white;
+}
 
-    .header h1 {
-        font-size: 27px;
-    }
+.btn.secondary{
+  background:#202c44;
+}
 
-    .card {
-        padding: 16px;
-    }
+.status-row{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:15px;
+}
 
-    .results {
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-    }
+.status.win{
+  color:#42e2b2;
+  background:#12362f;
+}
 
-    .result-box {
-        padding: 12px;
-    }
+.status.loss{
+  color:#ff8493;
+  background:#391c25;
+}
 
-    .result-box strong {
-        font-size: 17px;
-    }
+.status.be{
+  color:#f6cf74;
+  background:#3b3016;
+}
+
+.summary{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.metric{
+  flex:1;
+  min-width:145px;
+  padding:15px;
+  background:var(--card2);
+  border:1px solid var(--border);
+  border-radius:11px;
+}
+
+.metric span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.metric strong{
+  display:block;
+  font-size:21px;
+  margin-top:5px;
+}
+
+.results{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:12px;
+}
+
+.result{
+  padding:15px;
+  background:var(--card2);
+  border:1px solid var(--border);
+  border-radius:11px;
+}
+
+.result span{
+  color:var(--muted);
+  font-size:12px;
+}
+
+.result b{
+  display:block;
+  margin-top:6px;
+  font-size:20px;
+}
+
+.green{color:var(--green)}
+.red{color:var(--red)}
+.blue{color:var(--cyan)}
+
+.warning{
+  margin-top:15px;
+  padding:13px;
+  border-radius:9px;
+  background:#332b12;
+  border:1px solid #66552e;
+  color:#f5d47b;
+}
+
+footer{
+  text-align:center;
+  color:#667795;
+  padding:10px 20px 30px;
+}
+
+@media(max-width:850px){
+  .grid{grid-template-columns:1fr}
+  .fields{grid-template-columns:1fr 1fr}
+}
+
+@media(max-width:500px){
+  .fields{grid-template-columns:1fr}
+  .results{grid-template-columns:1fr}
+  .badge{display:none}
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<header>
+  <div>
+    <h1>📈 Trading Risk Calculator</h1>
+    <p>Risk Management • Position Sizing • Daily Trade Tracker</p>
+  </div>
 
-    <div class="header">
-        <h1>TradePilot</h1>
-        <p>Smart Trading Risk Calculator</p>
-    </div>
+  <div class="badge">20+ Instruments</div>
+</header>
 
-    <div class="card">
-        <h2>Calculate Your Trading Risk</h2>
+<main>
 
-        <div class="form-group">
-            <label for="instrument">Select Instrument</label>
-            <select id="instrument">
-                <option value="XAUUSD">XAUUSD — Gold</option>
-                <option value="EURUSD">EURUSD</option>
-                <option value="EURJPY">EURJPY</option>
-                <option value="USDJPY">USDJPY</option>
-                <option value="BTCUSD">BTCUSD — Bitcoin</option>
-                <option value="ETHUSD">ETHUSD — Ethereum</option>
-            </select>
-        </div>
+<!-- INSTRUMENTS -->
+<section class="card">
 
-        <div class="form-group">
-            <label for="balance">Account Balance (USD)</label>
-            <input id="balance" type="number" min="0"
-                   step="any" placeholder="e.g. 5000">
-        </div>
+<h2>Trading Instrument</h2>
 
-        <div class="form-group">
-            <label for="risk">Risk Percentage (%)</label>
-            <input id="risk" type="number" min="0"
-                   max="100" step="any" value="1">
-        </div>
+<div class="instruments">
 
-        <div class="form-group">
-            <label for="entry">Entry Price</label>
-            <input id="entry" type="number" min="0"
-                   step="any" placeholder="Enter entry price">
-        </div>
+<button class="instrument active" onclick="selectInstrument(this)">XAUUSD</button>
+<button class="instrument" onclick="selectInstrument(this)">EURUSD</button>
+<button class="instrument" onclick="selectInstrument(this)">GBPUSD</button>
+<button class="instrument" onclick="selectInstrument(this)">USDJPY</button>
+<button class="instrument" onclick="selectInstrument(this)">USDCHF</button>
+<button class="instrument" onclick="selectInstrument(this)">USDCAD</button>
+<button class="instrument" onclick="selectInstrument(this)">AUDUSD</button>
+<button class="instrument" onclick="selectInstrument(this)">NZDUSD</button>
+<button class="instrument" onclick="selectInstrument(this)">EURJPY</button>
+<button class="instrument" onclick="selectInstrument(this)">GBPJPY</button>
+<button class="instrument" onclick="selectInstrument(this)">EURGBP</button>
+<button class="instrument" onclick="selectInstrument(this)">AUDJPY</button>
+<button class="instrument" onclick="selectInstrument(this)">CADJPY</button>
+<button class="instrument" onclick="selectInstrument(this)">CHFJPY</button>
+<button class="instrument" onclick="selectInstrument(this)">BTCUSD</button>
+<button class="instrument" onclick="selectInstrument(this)">ETHUSD</button>
+<button class="instrument" onclick="selectInstrument(this)">NAS100</button>
+<button class="instrument" onclick="selectInstrument(this)">US30</button>
+<button class="instrument" onclick="selectInstrument(this)">SPX500</button>
+<button class="instrument" onclick="selectInstrument(this)">GER40</button>
 
-        <div class="form-group">
-            <label for="stop">Stop Loss Price</label>
-            <input id="stop" type="number" min="0"
-                   step="any" placeholder="Enter stop loss price">
-        </div>
+</div>
+</section>
 
-        <button onclick="calculateRisk()">Calculate Risk</button>
-        <div id="error" class="error" role="alert"></div>
-    </div>
 
-    <div class="card">
-        <h2>Calculation Results</h2>
+<!-- ACCOUNT -->
+<section class="card">
 
-        <div class="results">
-            <div class="result-box">
-                <span>Risk Amount</span>
-                <strong id="riskAmount">$0.00</strong>
-            </div>
+<h2>Account Settings</h2>
 
-            <div class="result-box">
-                <span>Stop Loss Distance</span>
-                <strong id="distance">0.00000</strong>
-            </div>
+<div class="fields">
 
-            <div class="result-box highlight">
-                <span>Suggested Lot Size</span>
-                <strong id="lotSize">0.00</strong>
-            </div>
+<div>
+<label>Account Balance ($)</label>
+<input id="balance" type="number" value="10000" oninput="calculate()">
+</div>
 
-            <div class="result-box">
-                <span>Estimated Loss</span>
-                <strong id="estimatedLoss">$0.00</strong>
-            </div>
-        </div>
+<div>
+<label>Risk per Day (%)</label>
+<input id="dailyRisk" type="number" value="2" step=".1" oninput="calculate()">
+</div>
 
-        <p class="note">
-            Important: Lot sizing uses simplified instrument assumptions.
-            Actual contract specifications, tick values, lot sizes and
-            currency conversions vary by broker. Verify the result with
-            your broker before placing a trade.
-        </p>
-    </div>
+<div>
+<label>Risk per Trade (%)</label>
+<input id="tradeRisk" type="number" value="1" step=".1" oninput="calculate()">
+</div>
 
-    <div class="footer">
-        TradePilot © 2026<br>
-        Plan your risk. Protect your capital.
-    </div>
+<div>
+<label>Max Trades / Day</label>
+<input id="maxTrades" type="number" value="4" min="1" oninput="calculate()">
+</div>
+
+</div>
+</section>
+
+
+<div class="grid">
+
+<!-- ENTRIES -->
+<section class="card">
+
+<h2>Today's Entries</h2>
+
+<div class="entry-tabs">
+
+<button class="entry-tab active" onclick="showEntry(1)">
+Entry 1
+</button>
+
+<button class="entry-tab" onclick="showEntry(2)">
+Entry 2
+</button>
+
+<button class="entry-tab" onclick="showEntry(3)">
+Entry 3
+</button>
+
+<button class="entry-tab" onclick="showEntry(4)">
+Entry 4
+</button>
 
 </div>
 
-<script>
-/*
-  Simplified assumptions for this calculator:
-  XAUUSD: 100 troy ounces per lot
-  EURUSD: 100,000 EUR per lot
-  EURJPY: 100,000 EUR per lot
-  USDJPY: 100,000 USD per lot
-  BTCUSD / ETHUSD: 1 coin per lot
+<div id="entry1" class="entry active"></div>
+<div id="entry2" class="entry"></div>
+<div id="entry3" class="entry"></div>
+<div id="entry4" class="entry"></div>
 
-  These assumptions are examples, not universal broker specifications.
+</section>
+
+
+<!-- SUMMARY -->
+<section class="card">
+
+<h2>Daily Summary</h2>
+
+<div class="summary">
+
+<div class="metric">
+<span>Daily Risk Limit</span>
+<strong id="dailyLimit">$200.00</strong>
+</div>
+
+<div class="metric">
+<span>Used Risk</span>
+<strong id="usedRisk">$0.00</strong>
+</div>
+
+<div class="metric">
+<span>Remaining Risk</span>
+<strong class="green" id="remainingRisk">$200.00</strong>
+</div>
+
+</div>
+
+
+<div class="results">
+
+<div class="result">
+<span>Trades Taken</span>
+<b id="tradesTaken">0 / 4</b>
+</div>
+
+<div class="result">
+<span>Risk per Trade</span>
+<b class="blue" id="riskPerTrade">$100.00</b>
+</div>
+
+</div>
+
+<div id="message" class="warning">
+You can take 4 planned entries today.
+</div>
+
+</section>
+
+</div>
+
+</main>
+
+<footer>
+Trading is risky. Use proper risk management.
+</footer>
+
+
+<script>
+
+const trades = [
+ {risk:0,status:""},
+ {risk:0,status:""},
+ {risk:0,status:""},
+ {risk:0,status:""}
+];
+
+
+function entryHTML(i){
+
+return `
+
+<div class="fields">
+
+<div>
+<label>Entry Price</label>
+<input
+id="e${i}"
+type="number"
+${i===1?'value="2650"':''}
+placeholder="2650"
+oninput="calcEntry(${i})">
+</div>
+
+<div>
+<label>Stop Loss</label>
+<input
+id="sl${i}"
+type="number"
+${i===1?'value="2640"':''}
+placeholder="2640"
+oninput="calcEntry(${i})">
+</div>
+
+<div>
+<label>Take Profit</label>
+<input
+id="tp${i}"
+type="number"
+${i===1?'value="2670"':''}
+placeholder="2670"
+oninput="calcEntry(${i})">
+</div>
+
+<div>
+<label>Position Size (Lot)</label>
+<input
+id="lot${i}"
+type="number"
+${i===1?'value="0.10"':''}
+step=".01"
+placeholder="0.10"
+oninput="calcEntry(${i})">
+</div>
+
+</div>
+
+
+<div class="actions">
+
+<button
+class="btn"
+onclick="takeEntry(${i})">
+Take Entry ${i}
+</button>
+
+<button
+class="btn secondary"
+onclick="resetEntry(${i})">
+Reset
+</button>
+
+</div>
+
+
+<div class="status-row">
+
+<button
+class="status win"
+onclick="setStatus(${i},'win')">
+✓ Win
+</button>
+
+<button
+class="status loss"
+onclick="setStatus(${i},'loss')">
+✕ Loss
+</button>
+
+<button
+class="status be"
+onclick="setStatus(${i},'be')">
+= Breakeven
+</button>
+
+<span id="st${i}" style="padding:10px;color:#91a0ba">
+Not taken
+</span>
+
+</div>
+
+
+<p style="color:#91a0ba">
+
+Risk Amount:
+<b id="risk${i}" style="color:white">$0.00</b>
+
+&nbsp; | &nbsp;
+
+R:R:
+<b id="rr${i}" style="color:white">—</b>
+
+</p>
+
+`;
+
+}
+
+
+for(let i=1;i<=4;i++){
+
+document.getElementById("entry"+i)
+.innerHTML=entryHTML(i);
+
+}
+
+
+function showEntry(n){
+
+document
+.querySelectorAll(".entry")
+.forEach(x=>x.classList.remove("active"));
+
+document
+.querySelectorAll(".entry-tab")
+.forEach(x=>x.classList.remove("active"));
+
+document
+.getElementById("entry"+n)
+.classList.add("active");
+
+document
+.querySelectorAll(".entry-tab")[n-1]
+.classList.add("active");
+
+}
+
+
+function selectInstrument(btn){
+
+document
+.querySelectorAll(".instrument")
+.forEach(x=>x.classList.remove("active"));
+
+btn.classList.add("active");
+
+}
+
+
+function calcEntry(i){
+
+const entry =
++document.getElementById("e"+i).value;
+
+const sl =
++document.getElementById("sl"+i).value;
+
+const tp =
++document.getElementById("tp"+i).value;
+
+const lot =
++document.getElementById("lot"+i).value || 0;
+
+
+/*
+Demo calculation.
+
+Final version:
+প্রতিটি instrument-এর আলাদা
+contract size / pip value
+যোগ করা হবে।
 */
 
-const instruments = {
-    XAUUSD: { type: "gold", contract: 100 },
-    EURUSD: { type: "forex", contract: 100000 },
-    EURJPY: { type: "jpy", contract: 100000 },
-    USDJPY: { type: "jpy", contract: 100000 },
-    BTCUSD: { type: "crypto", contract: 1 },
-    ETHUSD: { type: "crypto", contract: 1 }
+const risk =
+Math.abs(entry-sl)*lot*100;
+
+const reward =
+Math.abs(tp-entry)*lot*100;
+
+trades[i-1].risk=risk;
+
+document.getElementById("risk"+i)
+.textContent="$"+risk.toFixed(2);
+
+document.getElementById("rr"+i)
+.textContent =
+risk>0
+? (reward/risk).toFixed(2)+" : 1"
+: "—";
+
+calculate();
+
+}
+
+
+function takeEntry(i){
+
+calcEntry(i);
+
+if(trades[i-1].risk<=0){
+
+alert(
+"Please enter Entry, Stop Loss and Position Size first."
+);
+
+return;
+
+}
+
+trades[i-1].status="taken";
+
+document.getElementById("st"+i)
+.textContent="✓ Entry taken";
+
+calculate();
+
+}
+
+
+function setStatus(i,status){
+
+if(trades[i-1].risk<=0){
+
+alert("Set the trade details first.");
+
+return;
+
+}
+
+trades[i-1].status=status;
+
+if(status==="win"){
+
+document.getElementById("st"+i)
+.textContent="✓ Win";
+
+}
+
+else if(status==="loss"){
+
+document.getElementById("st"+i)
+.textContent="✕ Loss";
+
+}
+
+else{
+
+document.getElementById("st"+i)
+.textContent="= Breakeven";
+
+}
+
+calculate();
+
+}
+
+
+function resetEntry(i){
+
+trades[i-1]={
+risk:0,
+status:""
 };
 
-function formatMoney(value) {
-    return "$" + value.toLocaleString("en-US", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
+document.getElementById("e"+i).value="";
+document.getElementById("sl"+i).value="";
+document.getElementById("tp"+i).value="";
+document.getElementById("lot"+i).value="";
+
+document.getElementById("risk"+i)
+.textContent="$0.00";
+
+document.getElementById("rr"+i)
+.textContent="—";
+
+document.getElementById("st"+i)
+.textContent="Not taken";
+
+calculate();
+
 }
 
-function formatNumber(value, decimals = 5) {
-    return value.toLocaleString("en-US", {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: decimals
-    });
+
+function calculate(){
+
+const balance =
++document.getElementById("balance").value || 0;
+
+const dailyRisk =
++document.getElementById("dailyRisk").value || 0;
+
+const tradeRisk =
++document.getElementById("tradeRisk").value || 0;
+
+const maxTrades =
++document.getElementById("maxTrades").value || 4;
+
+
+const dailyLimit =
+balance*dailyRisk/100;
+
+const riskPerTrade =
+balance*tradeRisk/100;
+
+
+const usedRisk =
+trades.reduce(
+(sum,trade)=>
+sum+(trade.status ? trade.risk : 0),
+0
+);
+
+
+const remaining =
+Math.max(0,dailyLimit-usedRisk);
+
+
+const taken =
+trades.filter(
+trade=>trade.status
+).length;
+
+
+document.getElementById("dailyLimit")
+.textContent="$"+dailyLimit.toFixed(2);
+
+document.getElementById("usedRisk")
+.textContent="$"+usedRisk.toFixed(2);
+
+document.getElementById("remainingRisk")
+.textContent="$"+remaining.toFixed(2);
+
+document.getElementById("riskPerTrade")
+.textContent="$"+riskPerTrade.toFixed(2);
+
+document.getElementById("tradesTaken")
+.textContent=taken+" / "+maxTrades;
+
+
+const message =
+document.getElementById("message");
+
+
+if(remaining<=0 && dailyLimit>0){
+
+message.textContent=
+"⚠ Daily risk limit reached. No more risk is available today.";
+
 }
 
-function calculateRisk() {
-    const instrument = document.getElementById("instrument").value;
-    const balance = Number(document.getElementById("balance").value);
-    const riskPercent = Number(document.getElementById("risk").value);
-    const entry = Number(document.getElementById("entry").value);
-    const stop = Number(document.getElementById("stop").value);
+else if(taken>=maxTrades){
 
-    const error = document.getElementById("error");
-    error.textContent = "";
+message.textContent=
+"✓ Maximum planned trades reached for today.";
 
-    if (
-        document.getElementById("balance").value === "" ||
-        document.getElementById("risk").value === "" ||
-        document.getElementById("entry").value === "" ||
-        document.getElementById("stop").value === ""
-    ) {
-        error.textContent = "Please fill in all fields.";
-        return;
-    }
-
-    if (
-        !Number.isFinite(balance) ||
-        !Number.isFinite(riskPercent) ||
-        !Number.isFinite(entry) ||
-        !Number.isFinite(stop) ||
-        balance <= 0 ||
-        riskPercent <= 0 ||
-        riskPercent > 100 ||
-        entry <= 0 ||
-        stop <= 0
-    ) {
-        error.textContent =
-            "Enter valid positive numbers. Risk must be above 0% and no more than 100%.";
-        return;
-    }
-
-    if (entry === stop) {
-        error.textContent =
-            "Entry price and Stop Loss price cannot be the same.";
-        return;
-    }
-
-    const distance = Math.abs(entry - stop);
-    const riskAmount = balance * riskPercent / 100;
-    const spec = instruments[instrument];
-
-    let lossPerLot;
-
-    if (instrument === "EURUSD") {
-        // Simplified USD-quoted forex pair assumption.
-        lossPerLot = distance * spec.contract;
-    } else if (instrument === "XAUUSD") {
-        // Simplified gold CFD assumption.
-        lossPerLot = distance * spec.contract;
-    } else if (instrument === "BTCUSD" || instrument === "ETHUSD") {
-        // Simplified assumption: 1 coin per lot.
-        lossPerLot = distance * spec.contract;
-    } else if (instrument === "USDJPY") {
-        /*
-          USDJPY loss is first calculated in JPY, then approximated
-          in USD using the entry price as the conversion factor.
-        */
-        lossPerLot = distance * spec.contract / entry;
-    } else if (instrument === "EURJPY") {
-        /*
-          Simplified EURJPY calculation. Approximate JPY-to-USD
-          conversion assumes 150 JPY per USD.
-        */
-        const jpyPerUsd = 150;
-        lossPerLot = distance * spec.contract / jpyPerUsd;
-    }
-
-    if (!Number.isFinite(lossPerLot) || lossPerLot <= 0) {
-        error.textContent = "Unable to calculate. Please check your prices.";
-        return;
-    }
-
-    const rawLot = riskAmount / lossPerLot;
-
-    /*
-      Round DOWN to 0.01 lot steps so the suggested risk
-      does not exceed the target under the stated assumptions.
-    */
-    const lot = Math.floor((rawLot + 1e-10) * 100) / 100;
-    const estimatedLoss = lot * lossPerLot;
-
-    document.getElementById("riskAmount").textContent =
-        formatMoney(riskAmount);
-
-    document.getElementById("distance").textContent =
-        formatNumber(distance, 5);
-
-    document.getElementById("lotSize").textContent =
-        lot.toFixed(2);
-
-    document.getElementById("estimatedLoss").textContent =
-        formatMoney(estimatedLoss);
 }
+
+else{
+
+message.textContent=
+`You can take ${maxTrades-taken} more planned entry/entries today.`;
+
+}
+
+}
+
+
+calculate();
+
 </script>
 
 </body>
