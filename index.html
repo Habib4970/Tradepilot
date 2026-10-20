@@ -79,208 +79,896 @@ input:focus, select:focus{
 
 .btn{
     margin-top:15px;
-
-Final version:
-প্রতিটি instrument-এর আলাদা
-contract size / pip value
-যোগ করা হবে।
-*/
-
-const risk =
-Math.abs(entry-sl)*lot*100;
-
-const reward =
-Math.abs(tp-entry)*lot*100;
-
-trades[i-1].risk=risk;
-
-document.getElementById("risk"+i)
-.textContent="$"+risk.toFixed(2);
-
-document.getElementById("rr"+i)
-.textContent =
-risk>0
-? (reward/risk).toFixed(2)+" : 1"
-: "—";
-
-calculate();
-
+    padding:12px 22px;
+    border:none;
+    border-radius:8px;
+    background:linear-gradient(90deg,#6677ff,#35d8f4);
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
 }
 
-
-function takeEntry(i){
-
-calcEntry(i);
-
-if(trades[i-1].risk<=0){
-
-alert(
-"Please enter Entry, Stop Loss and Position Size first."
-);
-
-return;
-
+.btn:hover{
+    opacity:.9;
 }
 
-trades[i-1].status="taken";
-
-document.getElementById("st"+i)
-.textContent="✓ Entry taken";
-
-calculate();
-
+.save-message{
+    margin-top:10px;
+    color:#43e6a1;
+    font-size:13px;
+    display:none;
 }
 
-
-function setStatus(i,status){
-
-if(trades[i-1].risk<=0){
-
-alert("Set the trade details first.");
-
-return;
-
+.entry-tabs{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-bottom:20px;
 }
 
-trades[i-1].status=status;
-
-if(status==="win"){
-
-document.getElementById("st"+i)
-.textContent="✓ Win";
-
+.entry-tab{
+    padding:12px;
+    background:#080c1b;
+    border:1px solid #2b3557;
+    border-radius:8px;
+    color:#aaa;
+    cursor:pointer;
+    text-align:center;
 }
 
-else if(status==="loss"){
-
-document.getElementById("st"+i)
-.textContent="✕ Loss";
-
+.entry-tab.active{
+    background:#6677ff;
+    color:white;
+    border-color:#6677ff;
 }
 
-else{
-
-document.getElementById("st"+i)
-.textContent="= Breakeven";
-
+.entry{
+    display:none;
 }
 
-calculate();
-
+.entry.active{
+    display:block;
 }
 
+.entry-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+}
 
-function resetEntry(i){
+.entry-buttons{
+    margin-top:15px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
 
-trades[i-1]={
-risk:0,
-status:""
+.status-buttons{
+    display:flex;
+    gap:8px;
+    margin-top:15px;
+}
+
+.status-btn{
+    padding:8px 15px;
+    border-radius:7px;
+    border:1px solid #303956;
+    background:#080c1b;
+    color:#aaa;
+    cursor:pointer;
+}
+
+.status-btn.active{
+    background:#6677ff;
+    color:white;
+}
+
+.result-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-top:20px;
+}
+
+.result{
+    background:#080c1b;
+    border:1px solid #252e4b;
+    padding:15px;
+    border-radius:10px;
+}
+
+.result span{
+    display:block;
+    color:#8991aa;
+    font-size:12px;
+    margin-bottom:5px;
+}
+
+.result strong{
+    font-size:18px;
+}
+
+.warning{
+    margin-top:15px;
+    padding:12px;
+    border-radius:8px;
+    background:#251a10;
+    color:#ffb45c;
+    display:none;
+}
+
+.success{
+    margin-top:15px;
+    padding:12px;
+    border-radius:8px;
+    background:#10271f;
+    color:#43e6a1;
+    display:none;
+}
+
+@media(max-width:800px){
+    .settings-grid,
+    .entry-grid,
+    .result-grid{
+        grid-template-columns:1fr 1fr;
+    }
+}
+
+@media(max-width:500px){
+    body{
+        padding:12px;
+    }
+
+    .settings-grid,
+    .entry-grid,
+    .result-grid{
+        grid-template-columns:1fr;
+    }
+
+    .entry-tabs{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Trading Risk Calculator</h1>
+    <p class="subtitle">Risk Management & Daily Entry Tracker</p>
+
+    <!-- ACCOUNT SETTINGS -->
+    <div class="card">
+        <h2>Account Settings</h2>
+
+        <div class="settings-grid">
+
+            <div>
+                <label>Account Balance</label>
+                <input type="number" id="balance" placeholder="10000">
+            </div>
+
+            <div>
+                <label>Risk per Day (%)</label>
+                <input type="number" id="dailyRisk" placeholder="3">
+            </div>
+
+            <div>
+                <label>Risk per Trade (%)</label>
+                <input type="number" id="tradeRisk" placeholder="1">
+            </div>
+
+            <div>
+                <label>Max Trades / Day</label>
+                <input type="number" id="maxTrades" placeholder="4">
+            </div>
+
+        </div>
+
+        <button class="btn" onclick="saveSettings()">
+            Save Settings
+        </button>
+
+        <div class="save-message" id="saveMessage">
+            ✓ Account settings saved successfully.
+        </div>
+    </div>
+
+
+    <!-- INSTRUMENT -->
+    <div class="card">
+
+        <h2>Instrument</h2>
+
+        <select id="instrument">
+            <option>XAUUSD</option>
+            <option>EURUSD</option>
+            <option>GBPUSD</option>
+            <option>USDJPY</option>
+            <option>USDCHF</option>
+            <option>USDCAD</option>
+            <option>AUDUSD</option>
+            <option>NZDUSD</option>
+            <option>EURJPY</option>
+            <option>GBPJPY</option>
+            <option>EURGBP</option>
+            <option>AUDJPY</option>
+            <option>CADJPY</option>
+            <option>CHFJPY</option>
+            <option>BTCUSD</option>
+            <option>ETHUSD</option>
+            <option>NAS100</option>
+            <option>US30</option>
+            <option>SPX500</option>
+            <option>GER40</option>
+        </select>
+
+    </div>
+
+
+    <!-- DAILY ENTRIES -->
+    <div class="card">
+
+        <h2>Today's Entries</h2>
+
+        <div class="entry-tabs">
+
+            <div class="entry-tab active" onclick="showEntry(1)">
+                Entry 1
+            </div>
+
+            <div class="entry-tab" onclick="showEntry(2)">
+                Entry 2
+            </div>
+
+            <div class="entry-tab" onclick="showEntry(3)">
+                Entry 3
+            </div>
+
+            <div class="entry-tab" onclick="showEntry(4)">
+                Entry 4
+            </div>
+
+        </div>
+
+
+        <!-- ENTRY 1 -->
+        <div class="entry active" id="entry1">
+
+            <div class="entry-grid">
+
+                <div>
+                    <label>Entry Price</label>
+                    <input type="number" id="entryPrice1">
+                </div>
+
+                <div>
+                    <label>Stop Loss</label>
+                    <input type="number" id="sl1">
+                </div>
+
+                <div>
+                    <label>Take Profit</label>
+                    <input type="number" id="tp1">
+                </div>
+
+            </div>
+
+            <div class="entry-buttons">
+
+                <button class="btn" onclick="calculate(1)">
+                    Calculate
+                </button>
+
+                <button class="btn" onclick="resetEntry(1)">
+                    Reset
+                </button>
+
+            </div>
+
+            <div class="status-buttons">
+
+                <button class="status-btn" onclick="setStatus(1,'Win')">
+                    Win
+                </button>
+
+                <button class="status-btn" onclick="setStatus(1,'Loss')">
+                    Loss
+                </button>
+
+                <button class="status-btn" onclick="setStatus(1,'Breakeven')">
+                    Breakeven
+                </button>
+
+            </div>
+
+            <div class="result-grid">
+
+                <div class="result">
+                    <span>Position Size</span>
+                    <strong id="lot1">0.00</strong>
+                </div>
+
+                <div class="result">
+                    <span>Risk Amount</span>
+                    <strong id="risk1">$0.00</strong>
+                </div>
+
+                <div class="result">
+                    <span>R:R</span>
+                    <strong id="rr1">0.00</strong>
+                </div>
+
+                <div class="result">
+                    <span>Status</span>
+                    <strong id="status1">Pending</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ENTRY 2 -->
+        <div class="entry" id="entry2">
+
+            <div class="entry-grid">
+
+                <div>
+                    <label>Entry Price</label>
+                    <input type="number" id="entryPrice2">
+                </div>
+
+                <div>
+                    <label>Stop Loss</label>
+                    <input type="number" id="sl2">
+                </div>
+
+                <div>
+                    <label>Take Profit</label>
+                    <input type="number" id="tp2">
+                </div>
+
+            </div>
+
+            <div class="entry-buttons">
+
+                <button class="btn" onclick="calculate(2)">
+                    Calculate
+                </button>
+
+                <button class="btn" onclick="resetEntry(2)">
+                    Reset
+                </button>
+
+            </div>
+
+            <div class="status-buttons">
+
+                <button class="status-btn" onclick="setStatus(2,'Win')">
+                    Win
+                </button>
+
+                <button class="status-btn" onclick="setStatus(2,'Loss')">
+                    Loss
+                </button>
+
+                <button class="status-btn" onclick="setStatus(2,'Breakeven')">
+                    Breakeven
+                </button>
+
+            </div>
+
+            <div class="result-grid">
+
+                <div class="result">
+                    <span>Position Size</span>
+                    <strong id="lot2">0.00</strong>
+                </div>
+
+                <div class="result">
+                    <span>Risk Amount</span>
+                    <strong id="risk2">$0.00</strong>
+                </div>
+
+                <div class="result">
+                    <span>R:R</span>
+                    <strong id="rr2">0.00</strong>
+                </div>
+
+                <div class="result">
+                    <span>Status</span>
+                    <strong id="status2">Pending</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ENTRY 3 -->
+        <div class="entry" id="entry3">
+
+            <div class="entry-grid">
+
+                <div>
+                    <label>Entry Price</label>
+                    <input type="number" id="entryPrice3">
+                </div>
+
+                <div>
+                    <label>Stop Loss</label>
+                    <input type="number" id="sl3">
+                </div>
+
+                <div>
+                    <label>Take Profit</label>
+                    <input type="number" id="tp3">
+                </div>
+
+            </div>
+
+            <div class="entry-buttons">
+
+                <button class="btn" onclick="calculate(3)">
+                    Calculate
+                </button>
+
+                <button class="btn" onclick="resetEntry(3)">
+                    Reset
+                </button>
+
+            </div>
+
+            <div class="status-buttons">
+
+                <button class="status-btn" onclick="setStatus(3,'Win')">
+                    Win
+                </button>
+
+                <button class="status-btn" onclick="setStatus(3,'Loss')">
+                    Loss
+                </button>
+
+                <button class="status-btn" onclick="setStatus(3,'Breakeven')">
+                    Breakeven
+                </button>
+
+            </div>
+
+            <div class="result-grid">
+
+                <div class="result">
+                    <span>Position Size</span>
+                    <strong id="lot3">0.00</strong>
+                </div>
+
+                <div class="result">
+                    <span>Risk Amount</span>
+                    <strong id="risk3">$0.00</strong>
+                </div>
+
+                <div class="result">
+                    <span>R:R</span>
+                    <strong id="rr3">0.00</strong>
+                </div>
+
+                <div class="result">
+                    <span>Status</span>
+                    <strong id="status3">Pending</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ENTRY 4 -->
+        <div class="entry" id="entry4">
+
+            <div class="entry-grid">
+
+                <div>
+                    <label>Entry Price</label>
+                    <input type="number" id="entryPrice4">
+                </div>
+
+                <div>
+                    <label>Stop Loss</label>
+                    <input type="number" id="sl4">
+                </div>
+
+                <div>
+                    <label>Take Profit</label>
+                    <input type="number" id="tp4">
+                </div>
+
+            </div>
+
+            <div class="entry-buttons">
+
+                <button class="btn" onclick="calculate(4)">
+                    Calculate
+                </button>
+
+                <button class="btn" onclick="resetEntry(4)">
+                    Reset
+                </button>
+
+            </div>
+
+            <div class="status-buttons">
+
+                <button class="status-btn" onclick="setStatus(4,'Win')">
+                    Win
+                </button>
+
+                <button class="status-btn" onclick="setStatus(4,'Loss')">
+                    Loss
+                </button>
+
+                <button class="status-btn" onclick="setStatus(4,'Breakeven')">
+                    Breakeven
+                </button>
+
+            </div>
+
+            <div class="result-grid">
+
+                <div class="result">
+                    <span>Position Size</span>
+                    <strong id="lot4">0.00</strong>
+                </div>
+
+                <div class="result">
+                    <span>Risk Amount</span>
+                    <strong id="risk4">$0.00</strong>
+                </div>
+
+                <div class="result">
+                    <span>R:R</span>
+                    <strong id="rr4">0.00</strong>
+                </div>
+
+                <div class="result">
+                    <span>Status</span>
+                    <strong id="status4">Pending</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- DAILY SUMMARY -->
+    <div class="card">
+
+        <h2>Daily Summary</h2>
+
+        <div class="result-grid">
+
+            <div class="result">
+                <span>Daily Risk Limit</span>
+                <strong id="dailyLimit">$0.00</strong>
+            </div>
+
+            <div class="result">
+                <span>Used Risk</span>
+                <strong id="usedRisk">$0.00</strong>
+            </div>
+
+            <div class="result">
+                <span>Remaining Risk</span>
+                <strong id="remainingRisk">$0.00</strong>
+            </div>
+
+            <div class="result">
+                <span>Trades Taken</span>
+                <strong id="tradesTaken">0</strong>
+            </div>
+
+        </div>
+
+        <div class="warning" id="warning">
+            ⚠ Daily risk limit reached.
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let statuses = {
+    1:"Pending",
+    2:"Pending",
+    3:"Pending",
+    4:"Pending"
 };
 
-document.getElementById("e"+i).value="";
-document.getElementById("sl"+i).value="";
-document.getElementById("tp"+i).value="";
-document.getElementById("lot"+i).value="";
 
-document.getElementById("risk"+i)
-.textContent="$0.00";
+/* SAVE ACCOUNT SETTINGS */
 
-document.getElementById("rr"+i)
-.textContent="—";
+function saveSettings(){
 
-document.getElementById("st"+i)
-.textContent="Not taken";
+    const balance = parseFloat(document.getElementById("balance").value);
+    const dailyRisk = parseFloat(document.getElementById("dailyRisk").value);
+    const tradeRisk = parseFloat(document.getElementById("tradeRisk").value);
+    const maxTrades = parseInt(document.getElementById("maxTrades").value);
 
-calculate();
+    if(
+        !balance || balance <= 0 ||
+        !dailyRisk || dailyRisk <= 0 ||
+        !tradeRisk || tradeRisk <= 0 ||
+        !maxTrades || maxTrades <= 0
+    ){
 
+        alert("Please enter valid account settings.");
+        return;
+    }
+
+    const settings = {
+        balance: balance,
+        dailyRisk: dailyRisk,
+        tradeRisk: tradeRisk,
+        maxTrades: maxTrades
+    };
+
+    localStorage.setItem(
+        "tradingCalculatorSettings",
+        JSON.stringify(settings)
+    );
+
+    document.getElementById("saveMessage").style.display = "block";
+
+    updateSummary();
+
+    setTimeout(function(){
+        document.getElementById("saveMessage").style.display = "none";
+    },3000);
 }
 
 
-function calculate(){
+/* LOAD SAVED SETTINGS */
 
-const balance =
-+document.getElementById("balance").value || 0;
+function loadSettings(){
 
-const dailyRisk =
-+document.getElementById("dailyRisk").value || 0;
+    const saved = localStorage.getItem(
+        "tradingCalculatorSettings"
+    );
 
-const tradeRisk =
-+document.getElementById("tradeRisk").value || 0;
+    if(!saved) return;
 
-const maxTrades =
-+document.getElementById("maxTrades").value || 4;
+    const settings = JSON.parse(saved);
 
+    document.getElementById("balance").value =
+        settings.balance;
 
-const dailyLimit =
-balance*dailyRisk/100;
+    document.getElementById("dailyRisk").value =
+        settings.dailyRisk;
 
-const riskPerTrade =
-balance*tradeRisk/100;
+    document.getElementById("tradeRisk").value =
+        settings.tradeRisk;
 
+    document.getElementById("maxTrades").value =
+        settings.maxTrades;
 
-const usedRisk =
-trades.reduce(
-(sum,trade)=>
-sum+(trade.status ? trade.risk : 0),
-0
-);
-
-
-const remaining =
-Math.max(0,dailyLimit-usedRisk);
-
-
-const taken =
-trades.filter(
-trade=>trade.status
-).length;
-
-
-document.getElementById("dailyLimit")
-.textContent="$"+dailyLimit.toFixed(2);
-
-document.getElementById("usedRisk")
-.textContent="$"+usedRisk.toFixed(2);
-
-document.getElementById("remainingRisk")
-.textContent="$"+remaining.toFixed(2);
-
-document.getElementById("riskPerTrade")
-.textContent="$"+riskPerTrade.toFixed(2);
-
-document.getElementById("tradesTaken")
-.textContent=taken+" / "+maxTrades;
-
-
-const message =
-document.getElementById("message");
-
-
-if(remaining<=0 && dailyLimit>0){
-
-message.textContent=
-"⚠ Daily risk limit reached. No more risk is available today.";
-
-}
-
-else if(taken>=maxTrades){
-
-message.textContent=
-"✓ Maximum planned trades reached for today.";
-
-}
-
-else{
-
-message.textContent=
-`You can take ${maxTrades-taken} more planned entry/entries today.`;
-
-}
-
+    updateSummary();
 }
 
 
-calculate();
+/* ENTRY TABS */
+
+function showEntry(number){
+
+    document.querySelectorAll(".entry")
+        .forEach(entry => entry.classList.remove("active"));
+
+    document.querySelectorAll(".entry-tab")
+        .forEach(tab => tab.classList.remove("active"));
+
+    document.getElementById("entry" + number)
+        .classList.add("active");
+
+    document.querySelectorAll(".entry-tab")[number-1]
+        .classList.add("active");
+}
+
+
+/* CALCULATE */
+
+function calculate(number){
+
+    const entry = parseFloat(
+        document.getElementById("entryPrice"+number).value
+    );
+
+    const sl = parseFloat(
+        document.getElementById("sl"+number).value
+    );
+
+    const tp = parseFloat(
+        document.getElementById("tp"+number).value
+    );
+
+    if(
+        isNaN(entry) ||
+        isNaN(sl) ||
+        isNaN(tp)
+    ){
+        alert("Please enter Entry, Stop Loss and Take Profit.");
+        return;
+    }
+
+    const balance =
+        parseFloat(document.getElementById("balance").value) || 0;
+
+    const tradeRisk =
+        parseFloat(document.getElementById("tradeRisk").value) || 0;
+
+    const riskMoney =
+        balance * tradeRisk / 100;
+
+    const stopDistance =
+        Math.abs(entry - sl);
+
+    const rewardDistance =
+        Math.abs(tp - entry);
+
+    if(stopDistance <= 0){
+        alert("Stop Loss distance must be greater than 0.");
+        return;
+    }
+
+    /*
+       DEMO POSITION SIZE FORMULA
+
+       This is a simplified calculation.
+       Instrument-specific contract size/pip value
+       should be added for live trading accuracy.
+    */
+
+    const lot =
+        riskMoney / (stopDistance * 100);
+
+    const rr =
+        rewardDistance / stopDistance;
+
+    document.getElementById("lot"+number)
+        .innerText = lot.toFixed(2);
+
+    document.getElementById("risk"+number)
+        .innerText = "$" + riskMoney.toFixed(2);
+
+    document.getElementById("rr"+number)
+        .innerText = rr.toFixed(2);
+
+    updateSummary();
+}
+
+
+/* STATUS */
+
+function setStatus(number,status){
+
+    statuses[number] = status;
+
+    document.getElementById("status"+number)
+        .innerText = status;
+
+    updateSummary();
+}
+
+
+/* RESET */
+
+function resetEntry(number){
+
+    document.getElementById("entryPrice"+number).value = "";
+    document.getElementById("sl"+number).value = "";
+    document.getElementById("tp"+number).value = "";
+
+    document.getElementById("lot"+number)
+        .innerText = "0.00";
+
+    document.getElementById("risk"+number)
+        .innerText = "$0.00";
+
+    document.getElementById("rr"+number)
+        .innerText = "0.00";
+
+    document.getElementById("status"+number)
+        .innerText = "Pending";
+
+    statuses[number] = "Pending";
+
+    updateSummary();
+}
+
+
+/* DAILY SUMMARY */
+
+function updateSummary(){
+
+    const balance =
+        parseFloat(document.getElementById("balance").value) || 0;
+
+    const dailyRisk =
+        parseFloat(document.getElementById("dailyRisk").value) || 0;
+
+    const maxTrades =
+        parseInt(document.getElementById("maxTrades").value) || 0;
+
+    const dailyLimit =
+        balance * dailyRisk / 100;
+
+    let usedRisk = 0;
+    let trades = 0;
+
+    for(let i=1; i<=4; i++){
+
+        const riskText =
+            document.getElementById("risk"+i).innerText;
+
+        const risk =
+            parseFloat(riskText.replace("$","")) || 0;
+
+        if(statuses[i] !== "Pending"){
+            usedRisk += risk;
+            trades++;
+        }
+    }
+
+    const remaining =
+        Math.max(0,dailyLimit-usedRisk);
+
+    document.getElementById("dailyLimit")
+        .innerText = "$" + dailyLimit.toFixed(2);
+
+    document.getElementById("usedRisk")
+        .innerText = "$" + usedRisk.toFixed(2);
+
+    document.getElementById("remainingRisk")
+        .innerText = "$" + remaining.toFixed(2);
+
+    document.getElementById("tradesTaken")
+        .innerText = trades;
+
+
+    if(
+        usedRisk >= dailyLimit &&
+        dailyLimit > 0
+    ){
+        document.getElementById("warning")
+            .style.display = "block";
+    }else{
+        document.getElementById("warning")
+            .style.display = "none";
+    }
+
+
+    if(
+        maxTrades > 0 &&
+        trades >= maxTrades
+    ){
+        document.getElementById("warning").innerText =
+            "⚠ Maximum daily trades reached.";
+        document.getElementById("warning")
+            .style.display = "block";
+    }
+}
+
+
+/* LOAD SETTINGS WHEN PAGE OPENS */
+
+window.onload = function(){
+    loadSettings();
+};
 
 </script>
 
